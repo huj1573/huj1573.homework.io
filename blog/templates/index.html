@@ -1,0 +1,30 @@
+<center><h1>Hello Welcome to my BLOG</h1></center>
+{% if user.is_authenticated %}
+<p>환영합니다 {{user.username}}님</p>
+<form action="{%url 'logout'%}" method="POST">
+    {%csrf_token%}
+    <input type="submit" value="로그아웃">
+</form>
+{% else %}
+<p>로그인 해주세요</p>
+<a href="{%url 'signup'%}">회원가입</a>
+<a href="{%url 'login'%}">로그인</a>
+{% endif %}
+{% if user.is_authenticated %}
+<!-- 로그인한 유저만 보이는 화면 -->
+<a href="{%url 'create'%}">
+    <button>글쓰기</button>
+</a>
+{% else %} 
+<!-- 로그인하지않은 유저만 보이는 화면 -->
+{% endif %}
+{%for p in posts%}
+    <p>글 번호 : {{p.pk}}</p>
+    <a href = "{%url 'read' p.id %}">
+        글 제목 : {{p.title}}
+    </a>
+    <p>글 내용 : {{p.content|truncatewords:50}}</p>
+    <p>글 작성 시간 : {{p.created_at}}</p>
+    <p>글 수정 시간 : {{p.updated_at}}</p>
+    <br>
+{%endfor%}

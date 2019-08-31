@@ -1,0 +1,49 @@
+{% block content %}
+<!-- 글내용 창 -->
+<div class="mb-5">
+    <h3 class="card-text">{{post.title}}</h3>
+    <span>{{post.content|linebreaksbr}}</span>
+</div>
+<!-- 댓글쓰기 창 -->
+{% if user.is_authenticated %}
+<form action="{%url 'c_create' post.id%}" method="POST">
+    {%csrf_token%}
+    <div class="input-group mt-5 mb-5">
+        <input type="text" name="comment" class="form-control" placeholder="댓글을 입력하세요">
+        <div class="input-group-prepend">
+            <div class="input-group-text">
+                <input type="checkbox" name="anonymous" value="y">
+                <span style="font-size: 0.7em;">익명</span>
+            </div>
+        </div>
+        <div class="input-group-append">
+            <button class="btn btn-danger">글쓰기<i class="fas fa-pencil-alt"></i></button>
+        </div>
+    </div>
+</form>
+{% endif %}
+
+<!-- 아래 이후 댓글 -->
+<div>
+    <ul class="list-group mb-2">
+        {%for c in comment%}
+        <li class="list-group-item list-group-item-light">
+            {%if c.anonymous == True%}
+            <span style="font-weight: bold;font-size:0.7em;">익명</span>
+            {%else%}
+            <span style="font-weight: bold;font-size:0.7em;">{{c.user}}</span>
+            {%endif%}
+            <br>
+            {{c.content}}
+        </li>
+        {%endfor%}
+    </ul>
+</div>
+
+<button class="btn btn-outline-danger"><a style="color:red;" href="{%url 'index'%}">글 목록</a></button>
+{%if request.user == post.user or request.user.is_staff %}
+<!-- 글쓴이와 로그인한 유저가 같을 때 보이는 화면 -->
+<button class="btn btn-outline-danger"><a style="color:red;" href="{%url 'update' post.id%}">수정하기</a></button>
+<button class="btn btn-outline-danger"><a style="color:red;" href="{%url 'delete' post.id%}">삭제하기</a></button>
+{%endif%}
+{% endblock %}
